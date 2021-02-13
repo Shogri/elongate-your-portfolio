@@ -3,19 +3,18 @@ import time
 import requests
 import json
 import string
-import nltk
 import nlp
 
 # Constants
 TICK_TIME = 1.0
 USERNAME = "StonkRat"
 
-def get_ticker():
+def get_ticker(company_name):
     # Test HTTP Request
     # r = requests.get('http://d.yimg.com/autoc.finance.yahoo.com/autoc?query=tesla&region=1&lang=en&callback=YAHOO.Finance.SymbolSuggest.ssCallback')
     url = "http://d.yimg.com/autoc.finance.yahoo.com/autoc"
     params = {
-        'query':'tesla',
+        'query':company_name,
         'region':'1',
         'lang':'en',
         'callback':'YAHOO.Finance.SymbolSuggest.ssCallback'
@@ -25,7 +24,10 @@ def get_ticker():
     content = content.decode()
     content = str(content[39:-2])
 
-    print(str(json.loads(content)))
+    myjson = json.loads(content)
+
+    # Return the symbol
+    return myjson['ResultSet']['Result'][0]['symbol']
 
 def main():
     # Configure
