@@ -3,6 +3,8 @@ import nltk
 
 def nlp(tweet):
 
+    keywords = []
+
     tweet_token = nltk.word_tokenize(tweet)
     tagged_tokens = nltk.pos_tag(tweet_token)
 
@@ -12,5 +14,6 @@ def nlp(tweet):
 
     for w in tagged_tokens:
         if (w[1] == 'NNP'):
-            print(w[0])
+            keywords.append(w[0])
     
+    return keywords
