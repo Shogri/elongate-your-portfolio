@@ -1,12 +1,31 @@
 import twint
 import time
+import requests
+import json
 
+# Test HTTP Request
+# r = requests.get('http://d.yimg.com/autoc.finance.yahoo.com/autoc?query=tesla&region=1&lang=en&callback=YAHOO.Finance.SymbolSuggest.ssCallback')
+url = "http://d.yimg.com/autoc.finance.yahoo.com/autoc"
+params = {
+    'query':'tesla',
+    'region':'1',
+    'lang':'en',
+    'callback':'YAHOO.Finance.SymbolSuggest.ssCallback'
+}
+r = requests.get(url=url, params=params)
+content = r.content
+content = content.decode()
+content = str(content[39:-2])
+
+print(content)
+print(str(json.loads(content)))
 # Constants
-TICK_TIME = 5.0
+TICK_TIME = 1.0
+USERNAME = "StonkRat"
 
 # Configure
 c = twint.Config()
-c.Username = "StonkRat"
+c.Username = USERNAME
 c.Limit = 1
 c.Hide_output = True
 c.Store_object = True
@@ -18,7 +37,9 @@ print("DONE INITIAL SEARCH")
 # Store output
 tweets = twint.output.tweets_list
 latest_tweet_date = " ".join(tweets[0].datetime.split(" ")[:2])
+print("Latest tweet: " + tweets[0].tweet)
 
+print("Waiting for New Tweets...")
 starttime = time.time()
 while True:
 
@@ -29,12 +50,12 @@ while True:
     c.Since = latest_tweet_date
     twint.run.Search(c)
     tweets = twint.output.tweets_list
-    print("Latest tweet: " + tweets[0].tweet)
-    print("Number of tweets since {}: {}".format(latest_tweet_date, len(tweets)))
+    # print("Latest tweet: " + tweets[0].tweet)
+    # print("Number of tweets since {}: {}".format(latest_tweet_date, len(tweets)))
 
     # Check if a new tweet is detected
     if len(tweets) > 1:
-        print("NEW TWEET DETECTED, DO ANALYSIS ON TWEET HERE")
+        print("New Tweet: \"{}\"".format(tweets[0].tweet))
 
     time.sleep(TICK_TIME - ((time.time() - starttime) % TICK_TIME))
     
