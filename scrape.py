@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 from multiprocessing import Process, Queue
 import matplotlib.animation as animation
 from yahoo_fin import stock_info as si
+import gui
 
 # Constants
 TICK_TIME = 3.0
@@ -78,7 +79,11 @@ if __name__ == '__main__':
     p = Process(target=drawGraph, args=(q,))
     p.start()
 
-    # ticker = "BTC-USD"
+    # Gui Kickoff
+    guiq = Queue()
+    guiq.put({"",""})
+    guip = Process(target=gui.startGui, args=(guiq,))
+    guip.start()
 
     # Configure
     c = twint.Config()
