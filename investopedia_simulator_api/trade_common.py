@@ -389,7 +389,7 @@ class Trade(object):
     @limits(calls=6, period=20)
     def validate(self):
         if self.form_token is None:
-            print("refreshing form token")
+            # print("refreshing form token")
             self.refresh_form_token()
 
         if self.validated:
@@ -466,8 +466,8 @@ class Trade(object):
         fon = lambda x: x[0] if len(x)>0 else None
         token = fon(tree.xpath('//input[@name="formToken"]/@value'))
         self.form_token = token
-        print("form token: %s" % self.form_token)
-        print("form data: %s" % self.form_data)
+        # print("form token: %s" % self.form_token)
+        # print("form data: %s" % self.form_data)
 
 
 class PreparedTrade(dict):

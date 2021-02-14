@@ -162,7 +162,7 @@ class CancelOrderWrapper(object):
     @limits(calls=3,period=20)
     def wrap_cancel(self):
         url = "%s%s" % (UrlHelper.route('opentrades'),self.link)
-        print(url)
+        # print(url)
         session = Session()
         session.get(url)
         
@@ -244,8 +244,8 @@ class Parsers(object):
         portfolio_args['short_portfolio'] = short_portfolio
         portfolio_args['option_portfolio'] = option_portfolio
         portfolio_args['open_orders'] = Parsers.get_open_trades(portfolio_tree)
-        for order in portfolio_args['open_orders']:
-            print(order.__dict__)
+        # for order in portfolio_args['open_orders']:
+        #     print(order.__dict__)
         return Portfolio(**portfolio_args)
 
     @staticmethod

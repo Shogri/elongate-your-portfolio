@@ -29,7 +29,7 @@ def validate_and_execute_trade(trade,adjust_shares=True):
             raise e
 
     if trade.validated:
-        print(trade_info)
+        # print(trade_info)
         trade.execute()
     else:
         warnings.warn("Unable to validate trade.")
