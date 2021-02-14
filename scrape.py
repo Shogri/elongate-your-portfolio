@@ -10,10 +10,16 @@ from multiprocessing import Process, Queue
 import matplotlib.animation as animation
 from yahoo_fin import stock_info as si
 import gui
+import buy
+import tkinter as tk
+from tkinter import ttk
+from tkinter import * 
 
 # Constants
 TICK_TIME = 3.0
 USERNAME = "StonkRat"
+
+
 
 def get_ticker(company_name):
     if company_name == "Bitcoin":
@@ -72,18 +78,21 @@ def drawGraph(tickerQueue):
     plt.ylabel('Price in $USD')
     plt.show()
 
-if __name__ == '__main__':
+def getInputBoxValue():
+    userInput = Amount.get()
+    return userInput
+
+# this is the function called when the button is clicked
+
+
+def scrape(tickerQueue):
+    # buy.buy_stock("GOOG", 3000)
+    ticker = ""
     # Graph Process kickoff:
     q = Queue()
-    q.put("")
+    q.put(ticker)
     p = Process(target=drawGraph, args=(q,))
     p.start()
-
-    # Gui Kickoff
-    guiq = Queue()
-    guiq.put({"",""})
-    guip = Process(target=gui.startGui, args=(guiq,))
-    guip.start()
 
     # Configure
     c = twint.Config()
@@ -132,9 +141,67 @@ if __name__ == '__main__':
                 ticker = get_ticker(word)
                 print("Found ticker: {}".format(ticker))
             
-            q.put(ticker)
+            if ticker != "":
+                q.put(ticker)
+                buy.buy_stock(ticker, 3000)
 
         time.sleep(TICK_TIME - ((time.time() - starttime) % TICK_TIME))
 
+if __name__ == '__main__':
+    # Scraper Kickoff
+    tickerQueue = Queue()
+    scraperProcess = Process(target=scrape, args=(tickerQueue,))
+    scraperProcess.start()
+    print("Scraper Process Starting...")
+
+    root = Tk()
+
+    tweet_var = StringVar()
+    tweet_var.set("No tweets to show")
+
+    ticker_var = StringVar()
+    ticker_var.set("No tickers to show")
+
+    company_var = StringVar()
+    company_var.set("No Company")
+
+    buyamount_var = StringVar()
+    buyamount_var.set('0')
+
+    def btnClickFunction():
+        print('clicked')
+        value = getInputBoxValue()
+        buyamount_var.set(value)
+        root.update()
+        print("Buyamount: {}".format(buyamount_var.get()))
+
+    buyamount_wrapper = [buyamount_var]
+
+    # This is the section of code which creates the main window
+    root.geometry('666x442')
+    root.configure(background='#F0F8FF')
+    root.title('ElonBot')
+
+
+    # This is the section of code which creates the a label
+    Label(root, text='Tweet', bg='#F0F8FF', font=('arial', 12, 'normal')).place(x=71, y=31)
+
+
+    # This is the section of code which creates the a label
+    Label(root, text='Detected Company/Ticker', bg='#F0F8FF', font=('arial', 12, 'normal')).place(x=400, y=33)
+
+    # This is the section of code which creates a text input box
+    Amount=Entry(root)
+    Amount.place(x=251, y=355)
+
+    # This is the section of code which creates a button
+    Button(root, text='Set Auto-purchase ($USD)', bg='#DBDBDB', font=('arial', 12, 'normal'), command=btnClickFunction).place(x=393, y=349)
+
+    Label(root, textvariable=tweet_var, bg='#F0F8FF', font=('courier', 12, 'bold')).place(x=74, y=80)
+    Label(root, textvariable=ticker_var, bg='#F0F8FF', font=('courier', 12, 'bold')).place(x=402, y=76)
+    Label(root, text='Pre-Set Buy Amount:', bg='#F0F8FF', font=('arial', 12, 'bold')).place(x=125, y=392)
+    Label(root, textvariable=buyamount_var, bg='#F0F8FF', font=('courier', 12, 'bold')).place(x=296, y=392)
+
+    root.mainloop()
 
     
